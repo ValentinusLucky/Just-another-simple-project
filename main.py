@@ -2,13 +2,17 @@ import model
 
 def main():
 
-    print("Insert xk")
-    xk = input()
+    # Get current state and control input from user
 
-    print("Insert uk")
-    uk = input()
+    xk = list(map(float, input("Insert xk: ").split()))
+    print("The given values of xk are: ", xk)
 
-    model.model(xk, uk)
+    uk = list(map(float, input("Insert uk: ").split()))
+    print("The given values of uk are: ", uk)
+
+
+    fun = model.model(xk, uk[0])
+    print(fun)
 
 if __name__ == "__main__":
     main()
