@@ -2,7 +2,21 @@ import numpy as np
 from casadi import *
 
 def model(xk, uk):
-    """Function of the dynamical model"""
+    """
+    Function of the dynamical model
+
+    dt : time step, set to 0.1s
+    
+    xk : state vector at time k
+    uk : control input at time k
+
+    x[0] : position
+    x[1] : velocity
+    x[2] : angle
+    x[3] : angular velocity
+    
+    Return resulting state vector at time k+1
+    """
 
     getModelPars()
 
