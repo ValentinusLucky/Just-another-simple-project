@@ -43,6 +43,64 @@ def getModelPars():
     l = 0.6
     g = 9.81
 
+## NN modeling
+
+def addNN(xk, uk, xd, n, d):
+    """
+    Function to add the neural network to the model
+
+    xk : state vector at time k
+    uk : control input at time k
+    n : number of neurons in the hidden layer
+    d : depth of the neural network
+
+    Return resulting state vector at time k+1
+    """
+
+    getModelPars()
+
+    # Create randomizer for weights and biases
+    # Format of weights and biases:
+        # weights = [[Layer1], [Layer2], ..., [LayerN]] e.g [[n_x,z], [z,z], [z,n_y]]
+        # biases = [[Layer1], [Layer2], ..., [LayerN]] e.g [[z], [z], [n_y]]
+    
+    n_x = np.shape(xk)[0]
+    n_u = np.shape(uk)[0]
+
+    np.random.seed(0)
+    # TODO: Depth is set to 3 for now
+    # TODO: Check randn
+    weights = [np.random.randn(n_x, n), np.random.randn(n, n), np.random.randn(n, 1)]
+    biases = [np.random.randn(n_u, n), np.random.randn(n,), np.random.randn(1,)]
+
+    # TODO: x instead of xk, optiInit
+    y = casadi_mlp(xk, weights, biases)
+    y_d = casadi_mlp(xd, weights, biases)
+    cost = y - y_d
+
+    return cost
+
+
+def casadi_mlp(x, weights, biases):
+    """
+    NN Casadi; Tanh activation
+
+    Options are disabled for now
+
+    Format of weights and biases:
+    weights = [[Layer1], [Layer2], ..., [LayerN]] e.g [[n_x,z], [z,z], [z,n_y]]
+    biases = [[Layer1], [Layer2], ..., [LayerN]] e.g [[z], [z], [n_y]]
+    """
+
+    a = x
+    for W, b in zip(weights[:-1], biases[:-1]):
+        z = casadi.mtimes(W, a) + b
+        # a = casadi.fmax(z, 0)         # ReLU
+        a = casadi.tanh(z)            # Tanh
+        # a = 1 / (1 + casadi.exp(-z))     # Sigmoid
+    out = casadi.mtimes(weights[-1], a) + biases[-1]
+    return out
+
 
 
 def optiInit(N):
